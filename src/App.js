@@ -1,17 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      task: "cooking",
-      completed: false,
-    },
-    { id: 2, task: "coding", completed: false },
-    { id: 3, task: "jogging", completed: false },
-  ]);
+  const [todos, setTodos] = useState(JSON.parse(localStorage.getItem("todos")));
   const [currentTask, setCurrentTask] = useState("");
 
   function updateTask(event) {
@@ -27,10 +19,11 @@ function App() {
     });
 
     setCurrentTask("");
+
+    localStorage.setItem("todos", JSON.stringify(todos));
   }
 
   function toggleTask(id) {
-              
     setTodos((prevValue) => {
       return prevValue.map((todo) => {
         if (todo.id === id) {
@@ -84,13 +77,18 @@ function App() {
           <ol style={{ listStyleType: "none" }}>
             {todos?.map((todo) => {
               return (
-                <div style={{ display: "flex"}}>
+                <div style={{ display: "flex" }}>
                   <input
                     type="checkbox"
-                    checked={checked.todos} 
-                    onChange={handleChange} 
-                    style={{cursor:"pointer"}}
+                    checked={checked.todos}
+                    onChange={handleChange}
+                    style={{ cursor: "pointer" }}
                     onClick={() => toggleTask(todo.id)}
+                    onKeyDown={(e) => {
+                      if (e.code === "Enter") {
+                        setTask();
+                      }
+                    }}
                   />
                   <li
                     style={{
@@ -98,7 +96,7 @@ function App() {
                         todo.completed === true ? "line-through" : "none",
                       cursor: "pointer",
                     }}
-                    onClick={() => toggleTask(todo.id) }
+                    onClick={() => toggleTask(todo.id)}
                   >
                     {todo.task}
                   </li>
